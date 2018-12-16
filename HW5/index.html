@@ -1,0 +1,314 @@
+<script src=lib2.js></script>
+
+<body bgcolor=black text=white link=white alink=white vlink=white>
+<center>
+<canvas id='canvas1' width=400 height=400></canvas>
+</center>
+</body>
+
+<script id='my_vertex_shader' type='x-shader/x-vertex'>
+   attribute vec3 aPos;
+   varying   vec3 vPos;
+   void main() {
+      gl_Position = vec4(aPos, 1.);
+      vPos = aPos;
+   }
+</script>
+
+<script id='my_fragment_shader' type='x-shader/x-fragment'>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+uniform float uTime;
+varying vec3  vPos;
+uniform mat4  uMat;
+uniform mat4 uMat2;
+uniform mat4  txMat;
+uniform mat4  rxMat;
+uniform mat4  ryMat;
+
+
+vec4 raySph(vec3 V,vec3 W,vec4 S) {// TRACE RAY
+   vec3  P = S.xyz - V;            // TO SPHERE
+   float b = dot(W, P);
+   float d = b * b - dot(P, P) + S.w * S.w;
+   float t = b - sqrt(d);
+   return vec4(V + t*W, step(0.,d)*step(0.,t));
+}
+
+void main() {
+
+// DANCER SPHERE
+   float f = 2.;                // FOCAL LENGTH
+   vec3 color = vec3(0.,0.,.0); // BACKGD COLOR
+   vec3 V = vec3(0., 0., f);    // CREATE RAY
+   vec3 W = normalize(vec3(vPos.xy, -f));
+   vec4 S = vec4(.1,0.1,-3,.5); // DEFINE SPHERE
+
+   vec3 C = S.xyz;           // SEPARATE CENTER
+   float r = S.w;                 // AND RADIUS
+   C = (uMat * vec4(C, 1.)).xyz;  // APPLY uMat
+
+   vec4 P = raySph(V,W,vec4(C,r));// SHOOT RAY:
+   if (P.w > 0.) {                // IF IT HITS
+      vec3 N = (P.xyz - C) / r;   // DO SHADING
+      vec3 L = normalize(vec3(1.,0.1,-0.5));
+      vec3 L_2 = normalize(vec3(-1.,0.,-0.5));
+      float c = .0 + .9 * max(0., dot(N, L));
+      c += .0 + .9 * max(0., dot(N, L_2));
+
+      color = vec3(c, c, c);
+   }
+
+
+// HAND 2 SPHERE
+    
+   vec4 S2 = vec4(C.x+.5,C.y,C.z,.1); // DEFINE SPHERE
+
+   vec3 C2 = S2.xyz;           // SEPARATE CENTER
+   float r2 = S2.w;                 // AND RADIUS
+   C2 = ( vec4(C2, 1.)).xyz;  // APPLY uMat
+
+   vec4 P2 = raySph(V,W,vec4(C2,r2));// SHOOT RAY:
+   if (P2.w > 0.) {                // IF IT HITS
+      vec3 N2 = (P2.xyz - C2) / r2;   // DO SHADING
+      vec3 L2 = normalize(vec3(1.,0.,-0.5));
+      vec3 L2_2 = normalize(vec3(-1.,0.,-0.5));
+      float c2 = .0 + .9 * max(0., dot(N2, L2));
+      c2 += .0 + .9 * max(0., dot(N2, L2_2));
+
+      color = vec3(c2, c2, c2);
+   }
+
+// HAND 2 SPHERE
+    
+   vec4 S3 = vec4(C.x-.5,C.y,C.z,.1); // DEFINE SPHERE
+
+   vec3 C3 = S3.xyz;           // SEPARATE CENTER
+   float r3 = S3.w;                 // AND RADIUS
+   C3 = (( uMat)  *  vec4(C3, 1.)).xyz;  // APPLY uMat
+
+   vec4 P3 = raySph(V,W,vec4(C3,r3));// SHOOT RAY:
+   if (P3.w > 0.) {                // IF IT HITS
+      vec3 N3 = (P3.xyz - C3) / r3;   // DO SHADING
+      vec3 L3 = normalize(vec3(1.,0.,-0.5));
+      vec3 L3_2 = normalize(vec3(-1.,0.,-0.5));
+      float c3 = .0 + .9 * max(0., dot(N3, L3));
+      c3 += .0 + .9 * max(0., dot(N3, L3_2));
+      color = vec3(c3, c3, c3);
+   }
+
+
+
+// DANCER SPHERE
+   float f_2 = 2.;                // FOCAL LENGTH
+   vec3 V_2 = vec3(0., 0., f_2);    // CREATE RAY
+   vec3 W_2 = normalize(vec3(vPos.xy, -f));
+   vec4 S_2 = vec4(.1,0.1,-3,.5); // DEFINE SPHERE
+
+   vec3 C_2 = S_2.xyz;           // SEPARATE CENTER
+   float r_2 = S_2.w;                 // AND RADIUS
+   C_2 = (uMat2 * vec4(C_2, 1.)).xyz;  // APPLY uMat
+
+   vec4 P_2 = raySph(V_2,W_2,vec4(C_2,r_2));// SHOOT RAY:
+   if (P_2.w > 0.) {                // IF IT HITS
+      vec3 N_2 = (P_2.xyz - C_2) / r_2;   // DO SHADING
+      vec3 L_2 = normalize(vec3(1.,0.,-0.5));
+      vec3 L_2_2 = normalize(vec3(-1.,0.,-0.5));
+      float c_2 = .0 + .9 * max(0., dot(N_2, L_2));
+      c_2 += .0 + .9 * max(0., dot(N_2, L_2_2));
+
+      color = vec3(c_2, c_2, c_2);
+   }
+
+
+// HAND 2 SPHERE
+    
+   vec4 S2_2 = vec4(C_2.x+.5,C_2.y,C_2.z,.1); // DEFINE SPHERE
+
+   vec3 C2_2 = S2_2.xyz;           // SEPARATE CENTER
+   float r2_2 = S2_2.w;                 // AND RADIUS
+   C2_2 = ( vec4(C2_2, 1.)).xyz;  // APPLY uMat
+
+   vec4 P2_2 = raySph(V,W,vec4(C2_2,r2_2));// SHOOT RAY:
+   if (P2_2.w > 0.) {                // IF IT HITS
+      vec3 N2_2 = (P2_2.xyz - C2_2) / r2_2;   // DO SHADING
+      vec3 L2_2 = normalize(vec3(1.,0.,-0.5));
+      vec3 L2_2_2 = normalize(vec3(-1.,0.,-0.5));
+      float c2_2 = .0 + .9 * max(0., dot(N2_2, L2_2));
+      c2_2 += .0 + .9 * max(0., dot(N2_2, L2_2_2));
+
+      color = vec3(c2_2, c2_2, c2_2);
+   }
+
+// HAND 2 SPHERE
+    
+   vec4 S3_2 = vec4(C_2.x-.5,C_2.y,C_2.z,.1); // DEFINE SPHERE
+
+   vec3 C3_2 = S3_2.xyz;           // SEPARATE CENTER
+   float r3_2 = S3_2.w;                 // AND RADIUS
+   C3_2 = (( uMat2)  *  vec4(C3_2, 1.)).xyz;  // APPLY uMat
+
+   vec4 P3_2 = raySph(V,W,vec4(C3_2,r3_2));// SHOOT RAY:
+   if (P3_2.w > 0.) {                // IF IT HITS
+      vec3 N3_2 = (P3_2.xyz - C3_2) / r3_2;   // DO SHADING
+      vec3 L3_2 = normalize(vec3(1.,0.,-0.5));
+      vec3 L3_2_2 = normalize(vec3(-1.,0.,-0.5));
+      float c3_2 = .0 + .9 * max(0., dot(N3_2, L3_2));
+      c3_2 += .0 + .9 * max(0., dot(N3_2, L3_2_2));
+      color = vec3(c3_2, c3_2, c3_2);
+   }
+
+   gl_FragColor = vec4(sqrt(color), 1.0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<script id='instructions' type='text/html'><font color=#b0b0b0>
+<b>Description</b>
+<p>
+Trying to create a sphere based dance under the lights, similar to Pas de deux by Norman McLaren. Incomplete lighting and rotation.
+</script>
+   
+<script>
+var vs = my_vertex_shader.innerHTML,
+    fs = my_fragment_shader.innerHTML;
+    fs = fs.substring(1, fs.length);
+
+document.body.innerHTML = [''
+   ,'<center><font size=6 color=#b0b0b0>Spheres at night</center>'
+   ,'<TABLE cellspacing=0 cellpadding=0><TR>'
+   ,'<td width=50></td><td><font color=red size=5><div id=errorMessage>&nbsp;</div></font></td>'
+   ,'</TR><TR>'
+   ,'<table cellspacing=10>'
+   ,'<tr>'
+   ,'<td valign=top><font size=2 color=red><div id=errorMarker>&nbsp;</div></font></td>'
+   ,'<td valign=top>'
+   ,'<textArea id=textArea spellcheck=false '
+   ,'style="font:16px courier;outline-width:0;border-style:none;resize:none;overflow:scroll;"'
+   ,'></textArea>'
+   ,'</td><td valign=top>' + document.body.innerHTML + '</td>'
+   ,'<td valign=top><font size=5>' + instructions.innerHTML + '</td>'
+   ,'</tr></table>'
+   ,'</TR></TABLE>'
+   ].join('');
+
+var i, text = fs.split('\n'), cols = 0;
+for (i = 0 ; i < text.length ; i++)
+   cols = Math.max(cols, text[i].length);
+
+textArea.rows = text.length;
+textArea.cols = cols;
+textArea.value = fs;
+textArea.style.backgroundColor = '#202020';
+textArea.style.color = 'white';
+textArea.onkeyup = function() { canvas1.setShaders(vs, this.value); }
+
+var startTime = Date.now();
+
+function animate(gl) {
+   let time = (Date.now() - startTime) / 1000;
+   setUniform('1f', 'uTime', time);
+
+   // EXAMPLE OF SETTING UNIFORM SHADER VARIABLE uMat
+
+   
+
+let time2 = time-.5;
+
+
+
+
+let x = Math.sin(2*time);
+   let y = Math.sin(2 *time);
+   let z = Math.sin(2*time);
+
+let x2 = Math.sin(2*time2);
+   let y2 = Math.sin(2 *time2);
+   let z2 = Math.sin(2*time2);
+ 
+
+  setUniform('Matrix4fv', 'uMat', false, [ 1, 0, 0, 0,
+                                            0, 1, 0, 0,
+					    0, 0, 1, 0,
+					   z, 0, .1, 1]);
+  setUniform('Matrix4fv', 'uMat2', false, [ 1, 0, 0, 0,
+                                            0, 1, 0, 0,
+					    0, 0, 1, 0,
+					   z2, 0, .1, 1]);
+
+
+   setUniform('Matrix4fv', 'iMat', false, [ 1, 0, 0, 0,
+                                            0, 1, 0, 0,
+                                            0, 0, 1, 0,
+                                            0, 0, 0, 1]);
+
+
+   
+   setUniform('Matrix4fv', 'tMat', false, [ 1, 0, 0, x,
+                                            0, 1, 0, y,
+                                            0, 0, 1, z,
+                                            0, 0, 0, 1]);
+
+   setUniform('Matrix4fv', 'txMat', false, [ 1, 0, 0, 10*x,
+                                            0, 1, 0, 0,
+                                            0, 0, 1, 0,
+                                            0, 0, 0, 1]);
+
+   setUniform ('Matrix4fv', 'rxMat', false, [ 1, 0, 0, 0,
+                                            0, 0.2*x, -y, 0,
+                                            0, 0.2*y, 0.2*x, 0,
+                                            0, 0, 0, 1]);
+
+  
+   setUniform ('Matrix4fv', 'ryMat', false, [ x, 0, y, 0,
+                                            0, 1,  0, 0,
+                                            y, 0, x, 0,
+                                            0, 0, 0, 1]);   
+
+   setUniform ('Matrix4fv', 'rzMat', false,    [ x, y, 0, 0,
+                                            y, x,  0, 0,
+                                            0, 0, 1, 0,
+                                            0, 0, 0, 1]);
+
+      setUniform('Matrix4fv', 'sMat', false ,[ x, 0, 0, 0,
+                                           0, y, 0, 0,
+                                           0, 0, z, 0,
+                                           0, 0, 0, 1]);
+}
+gl_start(canvas1, vs, fs);
+</script>
+
